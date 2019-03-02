@@ -22,14 +22,17 @@ def main():
     gold = (255, 198, 39)
 
     jade_img = pygame.image.load("jade_plant.png")
+    water_img = pygame.image.load("water.png")
 
     def things_dodged(count):
         font = pygame.font.SysFont(None, 25)
-        text = font.render("Dodged: " + str(count), True, gold)
+        text = font.render("Collected: " + str(count), True, gold)
         game_display.blit(text, (0,0))
 
     def draw_things(thingx, thingy, thingw, thingh, color):
-        pygame.draw.rect(game_display, color, [thingx, thingy, thingw, thingh])
+        # First version - pygame.draw.rect(game_display, color, [thingx, thingy, thingw, thingh])
+        # Water drop
+        game_display.blit(water_img, (thingx, thingy))
 
     def text_objects(text, font):
         textSurface = font.render(text, True, white)
@@ -72,6 +75,7 @@ def main():
         thing_speed = 6
         thing_width = 300
         thing_height = 300
+        collected = False
 
         # Sets up to handle when the user quits the game
         game_exit = False
@@ -126,15 +130,17 @@ def main():
             if thing_starty > display_height:
                 thing_starty = 0 - thing_height
                 thing_startx = random.randrange(0, display_width)
-                dodged += 1
-                thing_speed += 1
-                thing_width += (dodged*1.2)
+                if collected:
+                    dodged += 1
+                    thing_speed += 1
+                    # thing_width += (dodged * 1.2)
+                    collected = False
 
             # Collision detection
             if y < thing_starty + thing_height:
 
                 if (x > thing_startx and x < thing_startx + thing_width) or (x+plant_width > thing_startx and x+plant_width < thing_startx+thing_width):
-                    crash()
+                    collected = True
 
             pygame.display.update()
             clock.tick(60)
