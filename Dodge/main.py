@@ -20,6 +20,8 @@ def main():
     white = (255, 255, 255)
     maroon = (140, 29, 64)
     gold = (255, 198, 39)
+    bright_gold = (255, 215, 104)
+    bright_maroon = (142, 45, 76)
 
     jade_img = pygame.image.load("jade_plant.png")
     water_img = pygame.image.load("water.png")
@@ -52,6 +54,45 @@ def main():
 
     def crash():
         message_display("You hit the wall!")
+
+    def button(msg, x, y, w, h, inactive_color, active_color, action=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        if x+w > mouse[0] > x and y+h > mouse[1] > y:
+            pygame.draw.rect(game_display, active_color, (x,y,w,h))
+
+            if click[0] == 1 and action != None:
+                action()
+        else:
+            pygame.draw.rect(game_display, inactive_color, (x,y,w,h))
+
+        smallText = pygame.font.SysFont("comicsansms", 20)
+        textSurf, textRect = text_objects(msg, smallText)
+        textRect.center = ( (x+(w/2)), (y+(h/2)) )
+        game_display.blit(textSurf, textRect)
+
+    def game_intro():
+
+        intro = True;
+
+        while intro:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+            game_display.fill(black)
+            largeText = pygame.font.Font('freesansbold.ttf', 75)
+            TextSurf, TextRect = text_objects("Dodge", largeText)
+            TextRect.center = ((display_width/2), (display_height/2))
+            game_display.blit(TextSurf, TextRect)
+
+            button("Start!", 150,450,100,50,gold, bright_gold, game_loop)
+            button("Quit", 550,450,100,50, maroon,bright_maroon, quit)
+
+            pygame.display.update()
+            clock.tick(15)
 
     def jade(x, y):
         game_display.blit(jade_img, (x,y))
@@ -145,6 +186,7 @@ def main():
             pygame.display.update()
             clock.tick(60)
 
+    game_intro()
     game_loop()
     pygame.quit()
     quit()
